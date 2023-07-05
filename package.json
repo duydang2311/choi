@@ -10,7 +10,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"i18n": "typesafe-i18n --no-watch"
 	},
 	"devDependencies": {
 		"@csstools/normalize.css": "^12.0.0",
@@ -37,6 +38,7 @@
 		"vite": "^4.3.6"
 	},
 	"dependencies": {
-		"@tauri-apps/api": "^1.4.0"
+		"@tauri-apps/api": "^1.4.0",
+		"typesafe-i18n": "^5.24.3"
 	}
 }
