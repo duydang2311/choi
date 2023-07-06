@@ -23,7 +23,10 @@
 		submit: false
 	};
 	let fieldErrors: { [key in Field]?: string } = {};
-	let error: string = '';
+	let caption = {
+		ok: false,
+		text: ''
+	};
 	let pending = false;
 
 	async function submit(e: SubmitEvent) {
@@ -49,18 +52,23 @@
 				throw new Error($LL.error.message.badNetwork());
 			}
 			if (data.error) {
+				caption.ok = false;
 				switch (data.error.code) {
 					case 'NOT_FOUND': {
-						error = login.wrong();
+						caption.text = login.wrong();
 						break;
 					}
 					case 'WRONG': {
-						error = login.wrong();
+						caption.text = login.wrong();
 						break;
 					}
 				}
 				return;
 			}
+			caption = {
+				ok: true,
+				text: login.ok()
+			};
 		} catch (e: unknown) {
 			if (e instanceof Error) {
 				error = $LL.error.fetch({ message: e.message });
@@ -132,9 +140,9 @@
 		{login.noAccount()}
 		<Link href="/{$page.params.lang}/signup">{login.signUp()}</Link>.
 	</p>
-	<RowVisibility visible={!!error}>
-		<p class="text-h6 text-center font-bold text-red-500">
-			<Remember value={error} />
+	<RowVisibility visible={!!caption.text}>
+		<p class="text-h6 text-center font-bold {caption.ok ? 'text-green-500' : 'text-red-500'}">
+			<Remember value={caption.text} />
 		</p>
 	</RowVisibility>
 </div>
