@@ -33,13 +33,12 @@
 		e.preventDefault();
 		pending = true;
 		fieldErrors = {};
-		error = '';
 		if (!$form.name.length) {
-			fieldErrors.name = $LL.login.name.empty();
+			fieldErrors.name = login.name.empty();
 			return;
 		}
 		if (!$form.password.length) {
-			fieldErrors.password = $LL.login.password.empty();
+			fieldErrors.password = login.password.empty();
 			return;
 		}
 		try {
@@ -71,7 +70,7 @@
 			};
 		} catch (e: unknown) {
 			if (e instanceof Error) {
-				error = $LL.error.fetch({ message: e.message });
+				caption = { ok: false, text: $LL.error.fetch({ message: e.message }) };
 			}
 			return;
 		} finally {
