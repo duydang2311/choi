@@ -28,7 +28,7 @@
         "all": true,
         "request": true,
         "scope": [
-          "https://tauri-app.azurewebsites.net*"
+          "http://localhost:5174/api*"
         ]
       }
     },

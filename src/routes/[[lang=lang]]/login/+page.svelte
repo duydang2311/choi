@@ -1,77 +1,130 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Button from '$lib/components/Button.svelte';
 	import Input from '$lib/components/Input.svelte';
 	import Label from '$lib/components/Label.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Pending from '$lib/components/Pending.svelte';
+	import Remember from '$lib/components/Remember.svelte';
 	import RowVisibility from '$lib/components/RowVisibility.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { Tauri } from '$lib/services/tauri';
+	import LL from '$lib/i18n/i18n-svelte';
+	import { HttpClient } from '$lib/services/http-client';
+	import type { PageData } from './$types';
+	import { Body, ResponseType } from '@tauri-apps/api/http';
 
-	type Field = 'username' | 'password' | 'submit';
+	export let data: PageData;
+
+	type Field = 'name' | 'password' | 'submit';
 
 	const visible = {
-		username: true,
+		name: true,
 		password: false,
 		submit: false
 	};
+	let fieldErrors: { [key in Field]?: string } = {};
+	let caption: { ok?: boolean, text?: string } = {};
 	let pending = false;
-
-	function input({ target }: Event) {
-		if (!(target instanceof HTMLInputElement)) {
-			return;
-		}
-
-		if (target.name === 'username') {
-			visible.password = !!target.value;
-		} else if (target.name === 'password') {
-			visible.submit = !!target.value;
-		}
-	}
 
 	async function submit(e: SubmitEvent) {
 		e.preventDefault();
 		pending = true;
+		fieldErrors = {};
+		caption = {};
 
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		const data = new FormData(e.target as HTMLFormElement);
-		const ok = await Tauri.instance.invoke('plugin:login|login', {
-			username: data.get('username'),
-			password: data.get('password')
-		});
-		pending = false;
+		if (!$form.name.length) {
+			fieldErrors.name = login.name.empty();
+			return;
+		}
+		if (!$form.password.length) {
+			fieldErrors.password = login.password.empty();
+			return;
+		}
+
+		try {
+			const { data, ok } = await HttpClient.instance.fetch<string>('/login', {
+				method: 'POST',
+				body: Body.json({ name: $form.name, password: $form.password }),
+				responseType: ResponseType.JSON
+			});
+			
+			if (!ok) {
+				throw new Error($LL.error.message.badNetwork());
+			}
+			if (data.error) {
+				caption.ok = false;
+				switch (data.error.code) {
+					case 'NOT_FOUND': {
+						caption.text = login.wrong();
+						break;
+					}
+					case 'WRONG': {
+						caption.text = login.wrong();
+						break;
+					}
+				}
+				return;
+			}
+			
+			caption = {
+				ok: true,
+				text: login.ok()
+			};
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				caption = { ok: false, text: $LL.error.fetch({ message: e.message }) };
+			}
+			return;
+		} finally {
+			pending = false;
+		}
 	}
+
+	$: ({ login } = $LL);
+	$: ({ form } = data);
+	$: visible.password = $form.name.length !== 0;
+	$: visible.submit = visible.password && $form.password.length !== 0;
 </script>
 
 <div class="flex flex-col justify-center h-full p-4">
-	<h1 class="text-center mb-16">Log in to Choi.</h1>
+	<h1 class="text-center mb-16">{login.h1()}</h1>
 	<form method="post" action="?/login" class="grid gap-y-6 mx-auto w-72" on:submit={submit}>
-		<RowVisibility visible={visible.username} class="p-[2px]">
+		<RowVisibility visible={visible.name} class="p-[2px]">
 			<div class="grid gap-y-1">
-				<Label for="username">Email or username</Label>
+				<Label for="name">{login.name.label()}</Label>
 				<Input
 					type="text"
-					name="username"
-					id="username"
-					placeholder="Email or username"
-					on:input={input}
+					name="name"
+					id="name"
+					placeholder={login.name.placeholder()}
+					bind:value={$form.name}
 				/>
 			</div>
+			<RowVisibility visible={!!fieldErrors.name}>
+				<p class="text-h6 font-bold text-red-500">
+					<Remember value={fieldErrors.name} />
+				</p>
+			</RowVisibility>
 		</RowVisibility>
 		<RowVisibility visible={visible.password} class="p-[2px]">
 			<div class="grid gap-y-1">
 				<div class="flex justify-between">
-					<Label for="password">Password</Label>
-					<Link href="/en/forgot-password" class="text-h6">Forgot your password?</Link>
+					<Label for="password">{login.password.label()}</Label>
+					<Link href="/en/forgot-password" class="text-h6">{login.password.forgot()}</Link>
 				</div>
 				<Input
 					type="password"
 					name="password"
 					id="password"
-					placeholder="Password"
-					on:input={input}
+					placeholder={login.password.placeholder()}
+					bind:value={$form.password}
 				/>
 			</div>
+			<RowVisibility visible={!!fieldErrors.password}>
+				<p class="text-h6 font-bold text-red-500">
+					<Remember value={fieldErrors.password} />
+				</p>
+			</RowVisibility>
 		</RowVisibility>
 		<RowVisibility visible={visible.submit} class="p-[2px]">
 			<Button type="submit" class="w-full">
@@ -79,12 +132,18 @@
 					<div slot="pending">
 						<Spinner class="w-5 h-5" />
 					</div>
-					Log in
+					{login.submit()}
 				</Pending>
 			</Button>
 		</RowVisibility>
 	</form>
 	<p class="text-center text-h6">
-		Don't have an account? <Link href="/en/signup">Sign up</Link>.
+		{login.noAccount()}
+		<Link href="/{$page.params.lang}/signup">{login.signUp()}</Link>.
 	</p>
+	<RowVisibility visible={!!caption.text}>
+		<p class="text-h6 text-center font-bold {caption.ok ? 'text-green-500' : 'text-red-500'}">
+			<Remember value={caption.text} />
+		</p>
+	</RowVisibility>
 </div>
