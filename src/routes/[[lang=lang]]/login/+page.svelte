@@ -23,16 +23,15 @@
 		submit: false
 	};
 	let fieldErrors: { [key in Field]?: string } = {};
-	let caption = {
-		ok: false,
-		text: ''
-	};
+	let caption: { ok?: boolean, text?: string } = {};
 	let pending = false;
 
 	async function submit(e: SubmitEvent) {
 		e.preventDefault();
 		pending = true;
 		fieldErrors = {};
+		caption = {};
+
 		if (!$form.name.length) {
 			fieldErrors.name = login.name.empty();
 			return;
@@ -41,12 +40,14 @@
 			fieldErrors.password = login.password.empty();
 			return;
 		}
+
 		try {
 			const { data, ok } = await HttpClient.instance.fetch<string>('/login', {
 				method: 'POST',
 				body: Body.json({ name: $form.name, password: $form.password }),
 				responseType: ResponseType.JSON
 			});
+			
 			if (!ok) {
 				throw new Error($LL.error.message.badNetwork());
 			}
@@ -64,6 +65,7 @@
 				}
 				return;
 			}
+			
 			caption = {
 				ok: true,
 				text: login.ok()
@@ -100,7 +102,7 @@
 			</div>
 			<RowVisibility visible={!!fieldErrors.name}>
 				<p class="text-h6 font-bold text-red-500">
-					{fieldErrors.name}
+					<Remember value={fieldErrors.name} />
 				</p>
 			</RowVisibility>
 		</RowVisibility>
@@ -120,7 +122,7 @@
 			</div>
 			<RowVisibility visible={!!fieldErrors.password}>
 				<p class="text-h6 font-bold text-red-500">
-					{fieldErrors.password}
+					<Remember value={fieldErrors.password} />
 				</p>
 			</RowVisibility>
 		</RowVisibility>
