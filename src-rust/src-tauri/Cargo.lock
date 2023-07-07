@@ -79,6 +79,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "tauri-plugin-env",
 ]
 
 [[package]]
@@ -2927,6 +2928,13 @@ dependencies = [
  "syn 1.0.109",
  "tauri-codegen",
  "tauri-utils",
+]
+
+[[package]]
+name = "tauri-plugin-env"
+version = "0.0.0"
+dependencies = [
+ "tauri",
 ]
 
 [[package]]

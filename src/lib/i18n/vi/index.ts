@@ -25,6 +25,30 @@ const vi = {
 		signUp: 'Đăng ký',
 		wrong: 'Email, tên tài khoản hoặc mật khẩu không đúng.',
 		ok: 'Đăng nhập Choi thành công.'
+	},
+	signup: {
+		h1: 'Đăng ký tài khoản Choi.',
+		email: {
+			label: 'Email',
+			placeholder: 'Email',
+			empty: 'Email không được trống.',
+			conflict: 'Email đã được sử dụng.'
+		},
+		password: {
+			label: 'Mật khẩu',
+			placeholder: 'Mật khẩu',
+			empty: 'Mật khẩu không được trống.'
+		},
+		confirm: {
+			label: 'Xác nhận mật khẩu',
+			placeholder: 'Xác nhận mật khẩu',
+			empty: 'Xác nhận mật khẩu không được trống.',
+			wrong: 'Xác nhận mật khẩu không trùng khớp.'
+		},
+		submit: 'Đăng ký',
+		hadAccount: 'Đã có tài khoản?',
+		login: 'Đăng nhập',
+		ok: 'Bạn đã đăng ký tài khoản Choi thành công.'
 	}
 } satisfies Translation;
 
