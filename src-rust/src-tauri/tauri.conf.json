@@ -14,6 +14,12 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "path": {
+        "all": true
+      },
+      "fs": {
+        "all": true
+      },
       "window": {
         "close": true,
         "hide": true,
@@ -25,11 +31,23 @@
         "startDragging": true
       },
       "http": {
-        "all": true,
+        "all": false,
         "request": true,
         "scope": [
           "http://localhost:5174/api*"
         ]
+      },
+      "dialog": {
+        "all": false,
+        "ask": false,
+        "confirm": false,
+        "message": false,
+        "open": true,
+        "save": false
+      },
+      "protocol": {
+        "all": false,
+        "asset": true
       }
     },
     "bundle": {
@@ -66,7 +84,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; media-src 'self' asset: https://asset.localhost"
     },
     "updater": {
       "active": false
@@ -78,9 +96,11 @@
         "resizable": true,
         "title": "tauri-app",
         "width": 800,
-        "minWidth": 800,
-        "minHeight": 600,
-        "decorations": false
+        "minWidth": 210,
+        "minHeight": 210,
+        "decorations": false,
+        "hiddenTitle": true,
+        "theme": "Light"
       }
     ]
   }

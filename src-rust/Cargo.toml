@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "src-tauri",
+    "tauri-plugin-env",
+    "tauri-plugin-home",
+]

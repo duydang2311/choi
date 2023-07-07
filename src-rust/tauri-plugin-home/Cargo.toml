@@ -1,0 +1,13 @@
+[package]
+name = "tauri-plugin-home"
+version = "0.0.0"
+authors = [ "You" ]
+description = ""
+edition = "2021"
+rust-version = "1.60"
+exclude = ["/examples"]
+
+[dependencies]
+kira = "0.8.4"
+log = "0.4.19"
+tauri = { version = "1.4.0" }

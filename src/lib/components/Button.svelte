@@ -1,4 +1,5 @@
 <button
+	on:click
 	{...$$restProps}
 	class="text-p font-bold rounded cursor-pointer transition ease-in-out
 	bg-fill-200 border border-transparent outline-none
