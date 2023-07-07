@@ -1,4 +1,1 @@
-export const langEntries = [
-    { lang: 'en' },
-    { lang: 'vi' }
-]
+export const langEntries = [{ lang: 'en' }, { lang: 'vi' }];
