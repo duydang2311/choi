@@ -8,6 +8,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.4.0
     version: 1.4.0
+  http-status:
+    specifier: ^1.6.2
+    version: 1.6.2
   typesafe-i18n:
     specifier: ^5.24.3
     version: 5.24.3(typescript@5.1.6)
@@ -1456,6 +1459,11 @@ packages:
     dependencies:
       function-bind: 1.1.1
     dev: true
+
+  /http-status@1.6.2:
+    resolution: {integrity: sha512-oUExvfNckrpTpDazph7kNG8sQi5au3BeTo0idaZFXEhTaJKu7GNJCLHI0rYY2wljm548MSTM+Ljj/c6anqu2zQ==}
+    engines: {node: '>= 0.4.0'}
+    dev: false
 
   /human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
