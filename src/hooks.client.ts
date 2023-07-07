@@ -9,11 +9,13 @@ import 'sanitize.css/system-ui.css';
 import 'sanitize.css/ui-monospace.css';
 import './app.css';
 import { HttpClient } from '$lib/services/http-client';
-
-if (!process.env.API_BASE_URL) {
-	throw new ReferenceError('API_BASE_URL environment variable is required');
-}
+import { Tauri } from '$lib/services/tauri';
 
 HttpClient.useOptions({
-	baseUrl: process.env.API_BASE_URL
+	baseUrl: await Tauri.instance
+		.invoke<string>('plugin:env|get_env', { name: 'API_BASE_URL' })
+		.then((v) => v)
+		.catch(() => {
+			throw new ReferenceError('API_BASE_URL environment variable is required');
+		})
 });
